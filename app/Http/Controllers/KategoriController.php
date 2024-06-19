@@ -137,7 +137,7 @@ class KategoriController extends Controller
             'deskripsi' => 'required|string|unique:kategori',
             'kategori' => 'required|in:M,A,BHP,BTHP',
         ], [
-            'deskripsi.unique' => 'Deskripsi sudah ada dalam Kategori.', // Pesan kesalahan kustom untuk deskripsi duplikat
+            'deskripsi.unique' => 'Deskripsi sudah ada di dalam Kategori.', // Pesan kesalahan kustom untuk deskripsi duplikat
         ]);
 
         // query builder
@@ -168,46 +168,5 @@ class KategoriController extends Controller
 
             return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Dihapus!']);
         }
-    }
-
-    function updateAPIKategori(Request $request, $kategori_id){
-        $kategori = Kategori::find($kategori_id);
-
-        if (null == $kategori){
-            return response()->json(['status'=>"kategori tidak ditemukan"]);
-        }
-
-        $kategori->deskripsi= $request->deskripsi;
-        $kategori->kategori = $request->kategori;
-        $kategori->save();
-
-        return response()->json(["status"=>"kategori berhasil diubah"]);
-    }
-
-    function showAPIKategori(Request $request){
-        $kategori = Kategori::all();
-        return response()->json($kategori);
-    }
-
-    function buatAPIKategori(Request $request){
-        $request->validate([
-            'deskripsi' => 'required|string|max:100',
-            'kategori' => 'required|in:M,A,BHP,BTHP',
-        ]);
-
-        // Simpan data kategori
-        $kat = Kategori::create([
-            'deskripsi' => $request->deskripsi,
-            'kategori' => $request->kategori,
-        ]);
-
-        return response()->json(["status"=>"data berhasil dibuat"]);
-    }
-
-    function hapusAPIKategori($kategori_id){
-        $del_kategori = Kategori::findOrFail($kategori_id);
-        $del_kategori->delete();
-
-        return response()->json(["status"=>"data berhasil dihapus"]);
     }
 }
