@@ -35,7 +35,7 @@ CREATE TABLE `barang` (
   PRIMARY KEY (`id`),
   KEY `barang_kategori_id_foreign` (`kategori_id`),
   CONSTRAINT `barang_kategori_id_foreign` FOREIGN KEY (`kategori_id`) REFERENCES `kategori` (`id`) ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -44,6 +44,8 @@ CREATE TABLE `barang` (
 
 LOCK TABLES `barang` WRITE;
 /*!40000 ALTER TABLE `barang` DISABLE KEYS */;
+INSERT INTO `barang` VALUES
+(1,'Apple','iPhone 15 Pro Max','Kamera Jernih',12,4,'KVeVwD8tf935zWWwrUW45AUtGGg3HwwD1uxGOyKr.jpg','2024-06-19 04:40:57','2024-06-19 04:41:36');
 /*!40000 ALTER TABLE `barang` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -64,7 +66,7 @@ CREATE TABLE `barangkeluar` (
   PRIMARY KEY (`id`),
   KEY `barangkeluar_barang_id_foreign` (`barang_id`),
   CONSTRAINT `barangkeluar_barang_id_foreign` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -73,6 +75,8 @@ CREATE TABLE `barangkeluar` (
 
 LOCK TABLES `barangkeluar` WRITE;
 /*!40000 ALTER TABLE `barangkeluar` DISABLE KEYS */;
+INSERT INTO `barangkeluar` VALUES
+(1,'2024-06-19',2,1,'2024-06-19 04:43:08','2024-06-19 04:43:08');
 /*!40000 ALTER TABLE `barangkeluar` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -161,7 +165,7 @@ CREATE TABLE `barangmasuk` (
   PRIMARY KEY (`id`),
   KEY `barangmasuk_barang_id_foreign` (`barang_id`),
   CONSTRAINT `barangmasuk_barang_id_foreign` FOREIGN KEY (`barang_id`) REFERENCES `barang` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -170,6 +174,8 @@ CREATE TABLE `barangmasuk` (
 
 LOCK TABLES `barangmasuk` WRITE;
 /*!40000 ALTER TABLE `barangmasuk` DISABLE KEYS */;
+INSERT INTO `barangmasuk` VALUES
+(2,'2024-06-19',14,1,'2024-06-19 04:42:27','2024-06-19 04:42:27');
 /*!40000 ALTER TABLE `barangmasuk` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!50003 SET @saved_cs_client      = @@character_set_client */ ;
@@ -395,7 +401,7 @@ CREATE TABLE `kategori` (
   `created_at` timestamp NULL DEFAULT NULL,
   `updated_at` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -405,7 +411,8 @@ CREATE TABLE `kategori` (
 LOCK TABLES `kategori` WRITE;
 /*!40000 ALTER TABLE `kategori` DISABLE KEYS */;
 INSERT INTO `kategori` VALUES
-(2,'Laptop','A','2024-06-19 00:20:15','2024-06-19 04:03:22');
+(2,'Laptop','A','2024-06-19 00:20:15','2024-06-19 05:51:21'),
+(4,'Handphone','A','2024-06-19 04:41:28','2024-06-19 04:41:28');
 /*!40000 ALTER TABLE `kategori` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -559,6 +566,39 @@ INSERT INTO `users` VALUES
 (1,'Snooze','snooze@example.com',NULL,'$2y$12$GPieqhDGuM8f.wPN8qQYVeljguRYRRvjneQ9y3jp9p95CWH/vAoOu',NULL,'2024-06-18 23:25:16','2024-06-18 23:25:16');
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Temporary table structure for view `vKategori`
+--
+
+DROP TABLE IF EXISTS `vKategori`;
+/*!50001 DROP VIEW IF EXISTS `vKategori`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `vKategori` AS SELECT
+ 1 AS `id`,
+  1 AS `deskripsi`,
+  1 AS `kategori`,
+  1 AS `ketKategori` */;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Final view structure for view `vKategori`
+--
+
+/*!50001 DROP VIEW IF EXISTS `vKategori`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb3 */;
+/*!50001 SET character_set_results     = utf8mb3 */;
+/*!50001 SET collation_connection      = utf8mb3_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`root`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `vKategori` AS select `kategori`.`id` AS `id`,`kategori`.`deskripsi` AS `deskripsi`,`kategori`.`kategori` AS `kategori`,`ketKategori`(`kategori`.`kategori`) AS `ketKategori` from `kategori` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -569,4 +609,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2024-06-19 18:35:16
+-- Dump completed on 2024-06-19 20:06:59

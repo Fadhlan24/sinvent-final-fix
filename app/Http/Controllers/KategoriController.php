@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Session;
 use Illuminate\Http\Request;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use App\Models\Kategori;
 use App\Models\Barang;
@@ -13,23 +14,32 @@ class KategoriController extends Controller
 {
     public function index(Request $request)
     {
-        // query builder
-        // $rsetKategori = DB::table('kategori')->select('id','deskripsi', 'kategori',DB::raw('getKetKategori(kategori) as ketKategori'))->get();
 
+        // Query builder 
+        // $query = DB::table('kategori')->select('id', 'deskripsi', 'kategori', DB::raw('ketKategori(kategori) as ketKategori'));
+
+        // // Jika ada parameter pencarian
         // if ($request->has('search') && !empty($request->input('search'))) {
-        //     $rsetKategori->where('deskripsi', 'like', '%' . $request->input('search') . '%');
+        //     $query->where('deskripsi', 'like', '%' . $request->input('search') . '%');
         // }
-        // pakai yg di model
-        // $rsetKategori = Kategori::getKategoriAll()->paginate(10);
+
+
+        // Pangill Table menggunakan View
+        // $rsetKategori = DB::table('vKategori')->paginate(10);
+
 
         // pakai Eloquent ORM
-        $query = Kategori::select('id', 'deskripsi', 'kategori',
+        $query = Kategori::select(
+            'id',
+            'deskripsi',
+            'kategori',
             \DB::raw('CASE
                 WHEN kategori = "M" THEN "Modal"
                 WHEN kategori = "A" THEN "Alat"
                 WHEN kategori = "BHP" THEN "Bahan Habis Pakai"
                 ELSE "Bahan Tidak Habis Pakai"
-                END AS ketKategori'));
+                END AS ketKategori')
+        );
 
         // Jika ada parameter pencarian
         if ($request->has('search') && !empty($request->input('search'))) {
@@ -61,13 +71,13 @@ class KategoriController extends Controller
         ], [
             'deskripsi.unique' => 'Deskripsi sudah ada dalam Kategori.', // Pesan kesalahan untuk deskripsi duplikat
         ]);
-        
+
         // Eloquent ORM
         // Kategori::create([
         //     'deskripsi' => $request->deskripsi,
         //     'kategori' => $request->kategori,
         // ]);
-        
+
         // memulai transaksi
         try {
             DB::beginTransaction();
@@ -75,9 +85,9 @@ class KategoriController extends Controller
             // Eloquent
             Kategori::create([
                 'deskripsi' => $request->deskripsi,
-                'kategori'  => $request->kategori,
+                'kategori' => $request->kategori,
             ]);
-            
+
             // store function
             // $kategoribaru = Kategori::store([
             //     'deskripsi' => $request->deskripsi,
@@ -108,19 +118,20 @@ class KategoriController extends Controller
         // ->first();
 
         // pakai store procedure
-        // $rsetKategori = Kategori::getKategoriAll()
-        // ->where('id', '=', $id)
-        // ->first();
+        $rsetKategori = Kategori::getKategoriAll()
+            ->where('id', '=', $id)
+            ->first();
+
 
         // Eloquent ORM
-        $rsetKategori = Kategori::select('id', 'deskripsi', 'kategori',
-        \DB::raw('CASE
-            WHEN kategori = "M" THEN "Modal"
-            WHEN kategori = "A" THEN "Alat"
-            WHEN kategori = "BHP" THEN "Bahan Habis Pakai"
-            ELSE "Bahan Tidak Habis Pakai"
-            END AS ketKategori'))
-        ->find($id);
+        // $rsetKategori = Kategori::select('id', 'deskripsi', 'kategori',
+        // \DB::raw('CASE
+        //     WHEN kategori = "M" THEN "Modal"
+        //     WHEN kategori = "A" THEN "Alat"
+        //     WHEN kategori = "BHP" THEN "Bahan Habis Pakai"
+        //     ELSE "Bahan Tidak Habis Pakai"
+        //     END AS ketKategori'))
+        // ->find($id);
 
         return view('v_kategori.show', compact('rsetKategori'));
     }
@@ -134,33 +145,31 @@ class KategoriController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'deskripsi' => 'required|string|unique:kategori',
+            'deskripsi' => 'required|string',
             'kategori' => 'required|in:M,A,BHP,BTHP',
-        ], [
-            'deskripsi.unique' => 'Deskripsi sudah ada di dalam Kategori.', // Pesan kesalahan kustom untuk deskripsi duplikat
         ]);
 
         // query builder
-        // DB::table('kategori')
-        // ->where('id', $id)
-        // ->update([
-        //     'deskripsi' => $request->deskripsi,
-        //     'kategori' => $request->kategori,
-        //     'updated_at' => now(), // Mengupdate timestamp
-        // ]);
+        DB::table('kategori')
+            ->where('id', $id)
+            ->update([
+                'deskripsi' => $request->deskripsi,
+                'kategori' => $request->kategori,
+                'updated_at' => now(), // Mengupdate timestamp
+            ]);
 
         // Eloquent ORM
-        $rsetKategori = Kategori::findOrFail($id);
-        $rsetKategori->deskripsi = $request->deskripsi;
-        $rsetKategori->kategori = $request->kategori;
-        $rsetKategori->save();
+        // $rsetKategori = Kategori::findOrFail($id);
+        // $rsetKategori->deskripsi = $request->deskripsi;
+        // $rsetKategori->kategori = $request->kategori;
+        // $rsetKategori->save();
 
         return redirect()->route('kategori.index')->with(['success' => 'Data Berhasil Diupdate!']);
     }
 
     public function destroy($id)
     {
-        if (\DB::table('barang')->where('kategori_id', $id)->exists()){
+        if (\DB::table('barang')->where('kategori_id', $id)->exists()) {
             return redirect()->route('kategori.index')->with(['Gagal' => 'Data Gagal Dihapus!']);
         } else {
             $rsetKategori = Kategori::find($id);

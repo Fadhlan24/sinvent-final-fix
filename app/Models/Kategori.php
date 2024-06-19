@@ -11,33 +11,49 @@ class Kategori extends Model
 
     protected $table = 'kategori';
 
-    protected $fillable = ['deskripsi','kategori'];
+    protected $fillable = ['deskripsi', 'kategori'];
 
     public function barang()
     {
         return $this->hasMany(Barang::class);
     }
 
-    public static function getKategoriAll(){
+    public static function getKategoriAll()
+    {
         return DB::table('kategori')
-                    ->select('kategori.id','deskripsi',DB::raw('ketKategori(kategori) as ketkategori'));
+            ->select('id', 'deskripsi', 'kategori', DB::raw('ketKategori(kategori) as ketKategori'));
     }
 
-    public static function katShowAll(){
+
+
+    public static function katShowAll()
+    {
         return DB::table('kategori')
-                ->join('barang','kategori.id','=','barang.kategori_id')
-                ->select('kategori.id','deskripsi',DB::raw('ketKategori(kategori) as ketkategori'),
-                         'barang.merk');
-                // ->pagination(1);
-                // ->get();
+            ->join('barang', 'kategori.id', '=', 'barang.kategori_id')
+            ->select(
+                'kategori.id',
+                'deskripsi',
+                DB::raw('ketKategori(kategori) as ketkategori'),
+                'barang.merk'
+            );
+        // ->pagination(1);
+        // ->get();
 
     }
 
-    public static function showKategoriById($id){
+    public static function showKategoriById($id)
+    {
         return DB::table('kategori')
-                ->join('barang','kategori.id','=','barang.kategori_id')
-                ->select('barang.id','kategori.deskripsi',DB::raw('ketKategori(kategori.kategori) as ketkategori'),
-                         'barang.merk','barang.seri','barang.spesifikasi','barang.stok')
-                ->get();
+            ->join('barang', 'kategori.id', '=', 'barang.kategori_id')
+            ->select(
+                'barang.id',
+                'kategori.deskripsi',
+                DB::raw('ketKategori(kategori.kategori) as ketkategori'),
+                'barang.merk',
+                'barang.seri',
+                'barang.spesifikasi',
+                'barang.stok'
+            )
+            ->get();
     }
 }
